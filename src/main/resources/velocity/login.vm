@@ -1,0 +1,22 @@
+#parse("/velocity/layout.vm")
+#@mainLayout()
+<form id="loginForm" method="post">
+    #if($authenticationFailed)
+        <p>YOU LIED ABOUT WHO YOU ARE!!!</p>
+    #elseif($authenticationSucceeded)
+        <p>YOU HAVE PROVEN YOURSELF</p>
+    #elseif($loggedOut)
+        <p>WE DO NOT EVEN KNOW WHO YOU ARE ANYMORE</p>
+    #end
+    <h1>PROVE YOUR IDENTITY</h1>
+    <p>Fill in the form, but only if you are not a WMG spy.</p>
+    <label>Username:</label>
+    <input type="text" name="username" placeholder="u0000000" value="" required>
+    <label>Password:</label>
+    <input type="password" name="password" placeholder="12345" value="" required>
+    #if($loginRedirect)
+        <input type="hidden" name="loginRedirect" value="$loginRedirect">
+    #end
+    <input type="submit" value="PROVE IDENTITY">
+</form>
+#end

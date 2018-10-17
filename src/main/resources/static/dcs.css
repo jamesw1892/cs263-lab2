@@ -1,0 +1,18 @@
+html, body {
+    margin: 0;
+    background-color: #2A2D31;
+    color: white;
+    font-family: 'Lato', sans-serif;
+}
+
+h1 {
+    color: #FFC233;
+}
+
+a:link, a:visited {
+    color: #FFC233;
+}
+
+main, footer {
+    padding: 20px;
+}

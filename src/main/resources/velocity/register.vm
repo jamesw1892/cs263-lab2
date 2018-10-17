@@ -1,0 +1,15 @@
+#parse("/velocity/layout.vm")
+#@mainLayout()
+<form id="registerForm" method="post">
+    #if($registrationFailed)
+        <p>WE WERE UNABLE TO CREATE YOUR IDENTITY.</p>
+    #end
+    <h1>CREATE YOUR TRUE IDENTITY</h1>
+    <p>Fill in the form, but only if you are not a WMG spy.</p>
+    <label>Username:</label>
+    <input type="text" name="username" placeholder="u0000000" value="" required>
+    <label>Password:</label>
+    <input type="password" name="password" placeholder="12345" value="" required>
+    <input type="submit" value="Register">
+</form>
+#end

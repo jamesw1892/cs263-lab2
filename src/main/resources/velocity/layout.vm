@@ -1,0 +1,24 @@
+#macro(mainLayout)
+<html>
+<head>
+    <title>Department of Computer Science</title>
+    <link rel="stylesheet" href="/dcs.css">
+    <link href="https://fonts.googleapis.com/css?family=Lato" rel="stylesheet">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+</head>
+<body>
+<header>
+    <nav>
+    </nav>
+</header>
+<main>
+    <div id="content">
+        $bodyContent
+    </div>
+</main>
+<footer>
+    Copyright 1991 Department of Computer Science, University of Warwick
+</footer>
+</body>
+</html>
+#end

@@ -1,0 +1,4 @@
+#parse("/velocity/layout.vm")
+#@mainLayout()
+    <h1>The third boolean value.</h1>
+#end

@@ -1,0 +1,14 @@
+#parse("/velocity/layout.vm")
+#@mainLayout()
+    <h1>WELCOME TO THE DEPARTMENT OF COMPUTER SCIENCE</h1>
+    #if($currentUser)
+    <h2>THANK THE MAKER YOU ARE THE 100% GENUINE DCS MEMBER KNOWN AS &quot;$currentUser&quot;!</h2>
+    <p>Would you like us to forget all about you, though?</p>
+    <form method="post" action="/logout/">
+        <button id="logout">FORGET I WAS EVER HERE!</button>
+    </form>
+    #else
+    <h2>WE HOPE YOU ARE NOT A WMG SPY</h2>
+    <p>Would you like to <a href="/register/">register for an account</a>, though? Maybe you already have one and would like to <a href="/login/">prove your identity</a> to us?</p>
+    #end
+#end
