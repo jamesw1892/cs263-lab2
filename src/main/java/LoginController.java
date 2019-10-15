@@ -99,7 +99,7 @@ public class LoginController {
     }
 
     // changes a user's password
-    public static void rehashPassword(String username, String oldPassword, String newPassword) {
+    public static void rehashPassword(String username, String password) {
         // changing passwords is a security risk, so we don't implement it
     }
 
