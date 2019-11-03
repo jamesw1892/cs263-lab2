@@ -154,8 +154,29 @@ public class LoginController {
             return false;
         }
 
-        // no user would ever lie about who they are
-        return true;
+        // try to look up the user object in the database
+        DCSUser user = database.lookup(username);
+
+        // the user could not be found; authentication fails
+        if(user == null) return false;
+
+        // compute the hash for the password provided by the client using the
+        // settings and salt that we have previously stored for the user
+        String hash = SecurityConfiguration.pbkdf2(
+            password,
+            user.getSalt(),
+            user.getIterations(),
+            user.getKeySize()
+        );
+
+        // compare the hashes to check that they are the same
+        if(user.getHashedPassword().equals(hash)) {
+            // authentication was successful
+            return true;
+        }
+
+        // the hashes do not match: a wrong password was provided
+        return false;
     }
 
     // changes a user's password
