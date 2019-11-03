@@ -171,6 +171,16 @@ public class LoginController {
 
         // compare the hashes to check that they are the same
         if(user.getHashedPassword().equals(hash)) {
+            // check whether the number of iterations and the key size stored
+            // for this user are different than those in the global security
+            // configuration 
+            if(user.getIterations() != SecurityConfiguration.ITERATIONS ||
+               user.getKeySize() != SecurityConfiguration.KEY_SIZE) 
+            {
+                // calculate a new hash using the current, global settings
+                rehashPassword(username, password);
+            }
+
             // authentication was successful
             return true;
         }
@@ -181,7 +191,30 @@ public class LoginController {
 
     // changes a user's password
     public static void rehashPassword(String username, String password) {
-        // changing passwords is a security risk, so we don't implement it
+        DCSUser user = database.lookup(username);
+
+        // obtain the security configuration; we store these values in
+        // locals since we need to refer to them twice and it would be
+        // really bad if they happened to change between uses (this is
+        // not really possible in this example application since the
+        // security configuration is constant, but in a real system it
+        // might change dynamically)
+        int iterations = SecurityConfiguration.ITERATIONS;
+        int keySize = SecurityConfiguration.KEY_SIZE;
+
+        // update the configuration in the user entry so that we can later
+        // use the same settings when hashing passwords supplied during
+        // the authentication process in order to arrive at the same hash
+        user.setIterations(iterations);
+        user.setKeySize(keySize);
+
+        // update the user object with the new hash
+        user.setHashedPassword(SecurityConfiguration.pbkdf2(
+            password,
+            user.getSalt(),
+            iterations,
+            keySize
+        ));
     }
 
 }
