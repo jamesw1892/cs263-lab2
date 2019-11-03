@@ -1,7 +1,10 @@
 package dcs;
 
+import org.apache.commons.codec.binary.Hex;
+import org.apache.commons.lang3.StringUtils;
 import spark.*;
 import java.util.*;
+import java.security.SecureRandom;
 
 import static dcs.SessionUtil.*;
 
@@ -83,8 +86,65 @@ public class LoginController {
 
     // registers a new user
     public static boolean register(String username, String password) {
-        // hahahahahah silly users thinking we would create accounts for them
-        return false;
+        // check that no user with this name exists
+        if(database.lookup(username) != null) {
+            return false; // user does already exist
+        }
+
+        // we may wish to perform additional checks on `username` and
+        // `password` here to ensure that they of acceptable formats
+        // (e.g. a non-empty username, password of a certain length);
+        // no such requirements are given in the spec, but we add some
+        // for demonstration purposes here
+        if(StringUtils.isBlank(username) || 
+           StringUtils.isBlank(password) || 
+           password.length() < 8) {
+               return false; // invalid username or password
+        }
+
+        // initialise the DCSUser object for the new user with the
+        // specified username
+        DCSUser user = new DCSUser(username);
+        
+        // obtain the security configuration; we store these values in
+        // locals since we need to refer to them twice and it would be
+        // really bad if they happened to change between uses (this is
+        // not really possible in this example application since the
+        // security configuration is constant, but in a real system it
+        // might change dynamically)
+        int iterations = SecurityConfiguration.ITERATIONS;
+        int keySize = SecurityConfiguration.KEY_SIZE;
+
+        // store the configuration in the user entry so that we can later
+        // use the same settings when hashing passwords supplied during
+        // the authentication process in order to arrive at the same hash
+        user.setIterations(iterations);
+        user.setKeySize(keySize);
+
+        // generate a random salt: we use a cryptographically secure RNG
+        // (SecureRandom) to populate a 16 byte array with random bytes
+        // which we then turn into a hexadecimal String representation for
+        // the salt / use with 
+        SecureRandom random = new SecureRandom();
+        byte[] saltBytes = new byte[16];
+        random.nextBytes(saltBytes);
+        String salt = Hex.encodeHexString(saltBytes);
+
+        user.setSalt(salt);
+
+        // hash the password according to the
+        user.setHashedPassword(SecurityConfiguration.pbkdf2(
+            password,
+            salt,
+            iterations,
+            keySize
+        ));
+        
+        // add the user to the (in-memory) database
+        database.addUser(user);
+
+        // the account was successfully created
+        return true;
     }
 
     // performs the authentication process
