@@ -19,7 +19,7 @@ sourceCompatibility = 1.8
 targetCompatibility = 1.8
 
 dependencies {
-    implementation group: 'com.sparkjava', name: 'spark-core', version:'2.5'
+    implementation group: 'com.sparkjava', name: 'spark-core', version:'2.9.2'
     implementation group: 'com.sparkjava', name: 'spark-template-velocity', version:'2.3'
     implementation 'commons-codec:commons-codec:1.8'
 }
