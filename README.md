@@ -25,3 +25,15 @@ Implemented `LoginController.rehashPassword` and called it from `LoginController
 
 1. Rehashes the password with this new configuration
 1. Stores the updated password hash with the configuration in the database under that user
+
+# Extra Features
+
+I also added the following features:
+
+- Added configuration for salt length so we can increase this if necessary as well as the key length and number of iterations
+- Added configurations for minimum password strength so the users have to choose sufficiently strong passwords, requirements:
+    - At least 8 characters
+    - At least 1 lowercase letter
+    - At least 1 uppercase letter
+    - At least 1 number
+    - At least 1 symbol
