@@ -96,6 +96,11 @@ public class LoginController {
             return false;
         }
 
+        // check password is strong enough
+        if (!SecurityConfiguration.isPasswordStrongEnough(password)) {
+            return false;
+        }
+
         // create the user object
         DCSUser newUser = new DCSUser(username);
 

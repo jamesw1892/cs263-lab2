@@ -19,6 +19,13 @@ public class SecurityConfiguration {
     // the size of the salt to generate (bytes)
     public static final int SALT_SIZE = 16;
 
+    // requirements for password
+    public static final int PASSWORD_MIN_LENGTH = 8;
+    public static final int PASSWORD_MIN_LOWERCASE = 1;
+    public static final int PASSWORD_MIN_UPPERCASE = 1;
+    public static final int PASSWORD_MIN_DIGITS = 1;
+    public static final int PASSWORD_MIN_SYMBOLS = 1;
+
     // create a cryptographically secure pseudo random number generator
     private static SecureRandom cprng = new SecureRandom();
 
@@ -59,5 +66,29 @@ public class SecurityConfiguration {
         return user.getIterations()    != ITERATIONS
             || user.getKeySize()       != KEY_SIZE
             || user.getSalt().length() != SALT_SIZE * 2;
+    }
+
+    public static boolean isPasswordStrongEnough(String password) {
+
+        // reject if less than minimum length
+        if (password.length() < PASSWORD_MIN_LENGTH) return false;
+
+        // calculate number of each type of character
+        int num_lowercase = 0;
+        int num_uppercase = 0;
+        int num_digits = 0;
+        int num_symbols = 0;
+        for (char chr: password.toCharArray()) {
+            if ( Character.isLowerCase(chr))     ++num_lowercase;
+            if ( Character.isUpperCase(chr))     ++num_uppercase;
+            if ( Character.isDigit(chr))         ++num_digits;
+            if (!Character.isLetterOrDigit(chr)) ++num_symbols;
+        }
+
+        // allow if satisfies minimum requirements
+        return num_lowercase >= PASSWORD_MIN_LOWERCASE
+            && num_uppercase >= PASSWORD_MIN_UPPERCASE
+            && num_digits    >= PASSWORD_MIN_DIGITS
+            && num_symbols   >= PASSWORD_MIN_SYMBOLS;
     }
 }
