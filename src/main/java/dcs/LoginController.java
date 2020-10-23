@@ -90,25 +90,14 @@ public class LoginController {
     // registers a new user
     public static boolean register(String username, String password) {
 
-        // generate a 16-byte salt using a cprng
-        byte[] slt = new byte[16];
-        cprng.nextBytes(slt);
-        String salt = new String(slt);
+        // create the user object
+        DCSUser newUser = new DCSUser(username);
 
-        // use the defined security configuration
-        int keySize = SecurityConfiguration.KEY_SIZE;
-        int iterations = SecurityConfiguration.ITERATIONS;
+        // update details including generating salt and hashing password
+        updateUserSecurityDetails(newUser, password);
 
-        // generate the hashed password using pbkdf2
-        String hashedPassword = SecurityConfiguration.pbkdf2(password, salt, iterations, keySize);
-
-        // create the user object and add to database
-        DCSUser new_user = new DCSUser(username);
-        new_user.setIterations(iterations);
-        new_user.setKeySize(keySize);
-        new_user.setSalt(salt);
-        new_user.setHashedPassword(hashedPassword);
-        database.addUser(new_user);
+        // add the user to the database
+        database.addUser(newUser);
 
         return true;
     }
@@ -121,10 +110,8 @@ public class LoginController {
             return false;
         }
 
-        // lookup the user in the database
-        DCSUser user = database.lookup(username);
-
         // if the user is not in the database, deny access
+        DCSUser user = database.lookup(username);
         if (user == null) {
             return false;
         }
@@ -132,7 +119,11 @@ public class LoginController {
         // calculate hash of entered password
         // with same configuration as original password
         String hashedPassword = SecurityConfiguration.pbkdf2(
-            password, user.getSalt(), user.getIterations(), user.getKeySize());
+            password,
+            user.getSalt(),
+            user.getIterations(),
+            user.getKeySize()
+        );
 
         // if the newly generated hash does not match
         // the one in the database, deny access
@@ -141,26 +132,40 @@ public class LoginController {
         }
 
         // rehash the password if the security configuration has changed
-        rehashPassword(user, password);
+        if (user.getIterations() != SecurityConfiguration.ITERATIONS
+        || user.getKeySize() != SecurityConfiguration.KEY_SIZE) {
+
+            updateUserSecurityDetails(user, password);
+        }
 
         // grant access
         return true;
     }
 
-    // rehash the user's password if the security configuration has changed
-    public static void rehashPassword(DCSUser user, String password) {
+    // update the salt, key size and num iterations and rehash the user's password
+    private static void updateUserSecurityDetails(DCSUser user, String password) {
+        
+        // update the user's security configuration to match the global ones
+        int keySize = SecurityConfiguration.KEY_SIZE;
+        int iterations = SecurityConfiguration.ITERATIONS;
 
-        // if security configuration has changed
-        if (user.getIterations() != SecurityConfiguration.ITERATIONS
-            || user.getKeySize() != SecurityConfiguration.KEY_SIZE) {
+        // generate a 16-byte salt using a cprng
+        byte[] slt = new byte[16];
+        cprng.nextBytes(slt);
+        String salt = new String(slt);
 
-            // rehash the password with the new configuration
-            String hashedPassword = SecurityConfiguration.pbkdf2(password, user.getSalt(), SecurityConfiguration.ITERATIONS, SecurityConfiguration.KEY_SIZE);
+        // generate the hashed password using pbkdf2
+        String hashedPassword = SecurityConfiguration.pbkdf2(
+            password,
+            salt,
+            SecurityConfiguration.ITERATIONS,
+            SecurityConfiguration.KEY_SIZE
+        );
 
-            // update the configuration for that user in the database
-            user.setHashedPassword(hashedPassword);
-            user.setIterations(SecurityConfiguration.ITERATIONS);
-            user.setKeySize(SecurityConfiguration.KEY_SIZE);
-        }
+        // Update the details in the database
+        user.setIterations(SecurityConfiguration.ITERATIONS);
+        user.setKeySize(SecurityConfiguration.KEY_SIZE);
+        user.setSalt(salt);
+        user.setHashedPassword(hashedPassword);
     }
 }
