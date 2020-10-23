@@ -155,7 +155,7 @@ public class LoginController {
             || user.getKeySize() != SecurityConfiguration.KEY_SIZE) {
 
             // rehash the password with the new configuration
-            hashedPassword = SecurityConfiguration.pbkdf2(password, salt, SecurityConfiguration.ITERATIONS, SecurityConfiguration.KEY_SIZE);
+            String hashedPassword = SecurityConfiguration.pbkdf2(password, user.getSalt(), SecurityConfiguration.ITERATIONS, SecurityConfiguration.KEY_SIZE);
 
             // update the configuration for that user in the database
             user.setHashedPassword(hashedPassword);
