@@ -1,14 +1,20 @@
 package dcs;
 
-import spark.*;
-import java.util.*;
-
 import static dcs.SessionUtil.*;
+
+import java.security.SecureRandom;
+import java.util.HashMap;
+import java.util.Map;
+
+import spark.*;
 
 public class LoginController {
 
     // the DCS master database, very volatile, don't turn off the power
     private static Database database = new Database();
+
+    // create a cryptographically secure pseudo random number generator
+    private static SecureRandom cprng = new SecureRandom();
 
     // Serve the registration page (GET request)
     public static Route serveRegisterPage = (Request request, Response response) -> {
@@ -83,8 +89,28 @@ public class LoginController {
 
     // registers a new user
     public static boolean register(String username, String password) {
-        // hahahahahah silly users thinking we would create accounts for them
-        return false;
+
+        // generate a 16-byte salt using a cprng
+        byte[] slt = new byte[16];
+        cprng.nextBytes(slt);
+        String salt = new String(slt);
+
+        // use the defined security configuration
+        int keySize = SecurityConfiguration.KEY_SIZE;
+        int iterations = SecurityConfiguration.ITERATIONS;
+
+        // generate the hashed password using pbkdf2
+        String hashedPassword = SecurityConfiguration.pbkdf2(password, salt, iterations, keySize);
+
+        // create the user object and add to database
+        DCSUser new_user = new DCSUser(username);
+        new_user.setIterations(iterations);
+        new_user.setKeySize(keySize);
+        new_user.setSalt(salt);
+        new_user.setHashedPassword(hashedPassword);
+        database.addUser(new_user);
+
+        return true;
     }
 
     // performs the authentication process
