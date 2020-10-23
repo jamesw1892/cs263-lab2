@@ -26,6 +26,10 @@ Implemented `LoginController.rehashPassword` and called it from `LoginController
 1. Rehashes the password with this new configuration
 1. Stores the updated password hash with the configuration in the database under that user
 
+# Ex7
+
+Captured packets using Wireshark on the relevant port while registering on the website. The HTTP POST request from the first captured packet is given in `PacketCapture.txt` showing the captured password was `mypasswordA5&` (because of the minimum password requirements).
+
 # Extra Features
 
 I also added the following features:
