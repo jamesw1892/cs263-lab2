@@ -1,12 +1,14 @@
 package dcs;
 
-import org.apache.commons.codec.binary.Hex;
+import java.security.NoSuchAlgorithmException;
+import java.security.SecureRandom;
+import java.security.spec.InvalidKeySpecException;
+
 import javax.crypto.SecretKey;
 import javax.crypto.SecretKeyFactory;
 import javax.crypto.spec.PBEKeySpec;
-import java.io.UnsupportedEncodingException;
-import java.security.NoSuchAlgorithmException;
-import java.security.spec.InvalidKeySpecException;
+
+import org.apache.commons.codec.binary.Hex;
 
 // global security configuration
 public class SecurityConfiguration {
@@ -14,6 +16,9 @@ public class SecurityConfiguration {
     public static final int ITERATIONS = 1000;
     // the size of the key to generate
     public static final int KEY_SIZE = 256;
+
+    // create a cryptographically secure pseudo random number generator
+    private static SecureRandom cprng = new SecureRandom();
 
     // hash a password using PBKDF2
     public static String pbkdf2(String password, String salt, int iterations, int keySize) {
@@ -35,6 +40,15 @@ public class SecurityConfiguration {
         } catch (NoSuchAlgorithmException | InvalidKeySpecException e) {
             throw new RuntimeException(e);
         }
+    }
+
+    // return a newly generated salt
+    public static String generateSalt() {
+
+        // generate a 16-byte salt using a cprng
+        byte[] saltBytes = new byte[16];
+        cprng.nextBytes(saltBytes);
+        String salt = Hex.encodeHexString(saltBytes);
     }
 
     // whether the security configuration has changed since

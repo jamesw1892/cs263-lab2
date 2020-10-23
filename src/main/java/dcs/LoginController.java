@@ -2,11 +2,8 @@ package dcs;
 
 import static dcs.SessionUtil.*;
 
-import java.security.SecureRandom;
 import java.util.HashMap;
 import java.util.Map;
-
-import org.apache.commons.codec.binary.Hex;
 
 import spark.*;
 
@@ -14,9 +11,6 @@ public class LoginController {
 
     // the DCS master database, very volatile, don't turn off the power
     private static Database database = new Database();
-
-    // create a cryptographically secure pseudo random number generator
-    private static SecureRandom cprng = new SecureRandom();
 
     // Serve the registration page (GET request)
     public static Route serveRegisterPage = (Request request, Response response) -> {
@@ -151,13 +145,10 @@ public class LoginController {
     private static void updateUserSecurityDetails(DCSUser user, String password) {
         
         // update the user's security configuration to match the global ones
-        int keySize = SecurityConfiguration.KEY_SIZE;
         int iterations = SecurityConfiguration.ITERATIONS;
+        int keySize = SecurityConfiguration.KEY_SIZE;
 
-        // generate a 16-byte salt using a cprng
-        byte[] slt = new byte[16];
-        cprng.nextBytes(slt);
-        String salt = Hex.encodeHexString(slt);
+        String salt = SecurityConfiguration.generateSalt();
 
         // generate the hashed password using pbkdf2
         String hashedPassword = SecurityConfiguration.pbkdf2(
