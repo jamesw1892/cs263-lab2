@@ -36,4 +36,11 @@ public class SecurityConfiguration {
             throw new RuntimeException(e);
         }
     }
+
+    // whether the security configuration has changed since
+    // the user's configuration was last updated
+    public static boolean hasChanged(DCSUser user) {
+        return user.getIterations() != ITERATIONS
+            || user.getKeySize()    != KEY_SIZE;
+    }
 }

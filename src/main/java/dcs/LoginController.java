@@ -132,9 +132,7 @@ public class LoginController {
         }
 
         // rehash the password if the security configuration has changed
-        if (user.getIterations() != SecurityConfiguration.ITERATIONS
-        || user.getKeySize() != SecurityConfiguration.KEY_SIZE) {
-
+        if (SecurityConfiguration.hasChanged(user)) {
             updateUserSecurityDetails(user, password);
         }
 
