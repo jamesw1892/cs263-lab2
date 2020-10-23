@@ -16,6 +16,8 @@ public class SecurityConfiguration {
     public static final int ITERATIONS = 1000;
     // the size of the key to generate
     public static final int KEY_SIZE = 256;
+    // the size of the salt to generate (bytes)
+    public static final int SALT_SIZE = 16;
 
     // create a cryptographically secure pseudo random number generator
     private static SecureRandom cprng = new SecureRandom();
@@ -46,15 +48,18 @@ public class SecurityConfiguration {
     public static String generateSalt() {
 
         // generate a 16-byte salt using a cprng
-        byte[] saltBytes = new byte[16];
+        byte[] saltBytes = new byte[SALT_SIZE];
         cprng.nextBytes(saltBytes);
         String salt = Hex.encodeHexString(saltBytes);
+        System.out.println(salt);
+        System.out.println(salt.length());
     }
 
     // whether the security configuration has changed since
     // the user's configuration was last updated
     public static boolean hasChanged(DCSUser user) {
-        return user.getIterations() != ITERATIONS
-            || user.getKeySize()    != KEY_SIZE;
+        return user.getIterations()    != ITERATIONS
+            || user.getKeySize()       != KEY_SIZE
+            || user.getSalt().length() != SALT_SIZE * 2;
     }
 }
