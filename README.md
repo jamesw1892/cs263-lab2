@@ -1,8 +1,8 @@
 # Lab 2 of CS263: Cyber Security
 
-My code for lab 2, completing the code for a simple web server. It allows users to register an account, login and logout using a database. The users passwords are hashed using pbkdf2 with a salt and global iteration and key size configuration.
+My code for lab 2, completing the code for a simple web server. It allows users to register, login and logout using a database. The users' passwords are hashed using pbkdf2 with a salt unique to the user and a global configuration defining the number of iterations and key size.
 
-## Ex4
+# Ex4
 
 Implemented `LoginController.register` which:
 
@@ -11,7 +11,7 @@ Implemented `LoginController.register` which:
 1. Generates the hashed password using pbkdf2
 1. Adds the newly generated user to the database
 
-## Ex5
+# Ex5
 
 Implemented `LoginController.authenticate` which:
 
