@@ -140,13 +140,27 @@ public class LoginController {
             return false;
         }
 
-        // otherwise, grant access
+        // rehash the password if the security configuration has changed
+        rehashPassword(user, password);
+
+        // grant access
         return true;
     }
 
-    // changes a user's password
-    public static void rehashPassword(String username, String password) {
-        // changing passwords is a security risk, so we don't implement it
-    }
+    // rehash the user's password if the security configuration has changed
+    public static void rehashPassword(DCSUser user, String password) {
 
+        // if security configuration has changed
+        if (user.getIterations() != SecurityConfiguration.ITERATIONS
+            || user.getKeySize() != SecurityConfiguration.KEY_SIZE) {
+
+            // rehash the password with the new configuration
+            hashedPassword = SecurityConfiguration.pbkdf2(password, salt, SecurityConfiguration.ITERATIONS, SecurityConfiguration.KEY_SIZE);
+
+            // update the configuration for that user in the database
+            user.setHashedPassword(hashedPassword);
+            user.setIterations(SecurityConfiguration.ITERATIONS);
+            user.setKeySize(SecurityConfiguration.KEY_SIZE);
+        }
+    }
 }

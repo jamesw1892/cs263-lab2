@@ -18,3 +18,10 @@ Implemented `LoginController.authenticate` which:
 1. Looks up the username in the database and denies access if it is not in it
 1. Generates password hash based on entered password and original configuration (salt, number of iterations, key size). It denies access if this does not match the saved password hash
 1. Grants access if it has not already denied it
+
+# Ex6
+
+Implemented `LoginController.rehashPassword` and called it from `LoginController.authenticate`. If the global security configuration (number of iterations, key size) has changed, it:
+
+1. Rehashes the password with this new configuration
+1. Stores the updated password hash with the configuration in the database under that user
