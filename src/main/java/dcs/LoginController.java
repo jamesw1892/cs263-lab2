@@ -161,13 +161,13 @@ public class LoginController {
         String hashedPassword = SecurityConfiguration.pbkdf2(
             password,
             salt,
-            SecurityConfiguration.ITERATIONS,
-            SecurityConfiguration.KEY_SIZE
+            iterations,
+            keySize
         );
 
         // Update the details in the database
-        user.setIterations(SecurityConfiguration.ITERATIONS);
-        user.setKeySize(SecurityConfiguration.KEY_SIZE);
+        user.setIterations(iterations);
+        user.setKeySize(keySize);
         user.setSalt(salt);
         user.setHashedPassword(hashedPassword);
     }
