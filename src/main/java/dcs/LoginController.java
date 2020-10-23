@@ -90,6 +90,11 @@ public class LoginController {
     // registers a new user
     public static boolean register(String username, String password) {
 
+        // cannot create a user with the same name as an existing user
+        if (database.lookup(username) != null) {
+            return false;
+        }
+
         // create the user object
         DCSUser newUser = new DCSUser(username);
 
