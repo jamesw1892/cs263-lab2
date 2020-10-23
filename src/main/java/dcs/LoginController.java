@@ -115,12 +115,32 @@ public class LoginController {
 
     // performs the authentication process
     public static boolean authenticate(String username, String password) {
+
         // make sure the username and password aren't empty
         if (username.isEmpty() || password.isEmpty()) {
             return false;
         }
 
-        // no user would ever lie about who they are
+        // lookup the user in the database
+        DCSUser user = database.lookup(username);
+
+        // if the user is not in the database, deny access
+        if (user == null) {
+            return false;
+        }
+
+        // calculate hash of entered password
+        // with same configuration as original password
+        String hashedPassword = SecurityConfiguration.pbkdf2(
+            password, user.getSalt(), user.getIterations(), user.getKeySize());
+
+        // if the newly generated hash does not match
+        // the one in the database, deny access
+        if (!hashedPassword.equals(user.getHashedPassword())) {
+            return false;
+        }
+
+        // otherwise, grant access
         return true;
     }
 

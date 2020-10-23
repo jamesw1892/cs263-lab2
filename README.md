@@ -10,3 +10,11 @@ Implemented `LoginController.register` which:
 1. Gets the number of iterations and key size from the global pbkdf2 configuration
 1. Generates the hashed password using pbkdf2
 1. Adds the newly generated user to the database
+
+## Ex5
+
+Implemented `LoginController.authenticate` which:
+
+1. Looks up the username in the database and denies access if it is not in it
+1. Generates password hash based on entered password and original configuration (salt, number of iterations, key size). It denies access if this does not match the saved password hash
+1. Grants access if it has not already denied it
