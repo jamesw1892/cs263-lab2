@@ -6,6 +6,8 @@ import java.security.SecureRandom;
 import java.util.HashMap;
 import java.util.Map;
 
+import org.apache.commons.codec.binary.Hex;
+
 import spark.*;
 
 public class LoginController {
@@ -155,7 +157,7 @@ public class LoginController {
         // generate a 16-byte salt using a cprng
         byte[] slt = new byte[16];
         cprng.nextBytes(slt);
-        String salt = new String(slt);
+        String salt = Hex.encodeHexString(slt);
 
         // generate the hashed password using pbkdf2
         String hashedPassword = SecurityConfiguration.pbkdf2(
