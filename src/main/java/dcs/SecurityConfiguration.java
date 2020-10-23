@@ -53,6 +53,7 @@ public class SecurityConfiguration {
         String salt = Hex.encodeHexString(saltBytes);
         System.out.println(salt);
         System.out.println(salt.length());
+        return salt;
     }
 
     // whether the security configuration has changed since
