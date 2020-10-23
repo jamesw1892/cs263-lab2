@@ -48,12 +48,9 @@ public class SecurityConfiguration {
     public static String generateSalt() {
 
         // generate a 16-byte salt using a cprng
-        byte[] saltBytes = new byte[SALT_SIZE];
-        cprng.nextBytes(saltBytes);
-        String salt = Hex.encodeHexString(saltBytes);
-        System.out.println(salt);
-        System.out.println(salt.length());
-        return salt;
+        byte[] salt = new byte[SALT_SIZE];
+        cprng.nextBytes(salt);
+        return Hex.encodeHexString(salt);
     }
 
     // whether the security configuration has changed since
